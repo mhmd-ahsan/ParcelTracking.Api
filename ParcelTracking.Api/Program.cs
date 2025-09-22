@@ -22,6 +22,7 @@ builder.Services.AddSingleton<JwtHelper>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICourierRepository, CourierRepository>();
+builder.Services.AddScoped<IDeliveryRepository, DeliveryRepository>();
 builder.Services.AddScoped<IParcelRepository, ParcelRepository>();
 
 // ✅ JWT Authentication

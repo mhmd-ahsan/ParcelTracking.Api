@@ -23,9 +23,7 @@ namespace ParcelTracking.Api.Controllers
         {
             var parcels = await _repo.GetAllParcelsAsync();
             if (parcels == null || !parcels.Any())
-            {
                 return NotFound(ApiResponse<string>.FailResponse("No parcels in the database"));
-            }
 
             return Ok(ApiResponse<IEnumerable<ParcelResponseDto>>.SuccessResponse(parcels, "Parcels retrieved successfully"));
         }
@@ -36,9 +34,7 @@ namespace ParcelTracking.Api.Controllers
         {
             var parcel = await _repo.GetParcelByIdAsync(id);
             if (parcel == null)
-            {
                 return NotFound(ApiResponse<string>.FailResponse($"Parcel with ID {id} not found"));
-            }
 
             return Ok(ApiResponse<ParcelResponseDto>.SuccessResponse(parcel, "Parcel found."));
         }
@@ -49,9 +45,7 @@ namespace ParcelTracking.Api.Controllers
         {
             var parcel = await _repo.GetParcelByTrackingNoAsync(trackingNo);
             if (parcel == null)
-            {
                 return NotFound(ApiResponse<string>.FailResponse($"No parcel found with tracking no: {trackingNo}"));
-            }
 
             return Ok(ApiResponse<ParcelResponseDto>.SuccessResponse(parcel, "Parcel tracked successfully."));
         }
@@ -64,14 +58,19 @@ namespace ParcelTracking.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ApiResponse<string>.FailResponse("Invalid parcel data."));
 
+            // ParcelRepository now automatically inserts Delivery record
             var (parcelId, trackingNo) = await _repo.CreateParcelAsync(dto);
 
             return Ok(ApiResponse<object>.SuccessResponse(
-                new { ParcelId = parcelId, TrackingNo = trackingNo },
+                new
+                {
+                    ParcelId = parcelId,
+                    TrackingNo = trackingNo,
+                    Message = "Parcel created successfully and Delivery record auto-generated"
+                },
                 "Parcel created successfully"
             ));
         }
-
 
         // ✅ Update parcel status (Admin, Courier)
         [Authorize(Roles = "Admin,Courier")]
@@ -83,9 +82,7 @@ namespace ParcelTracking.Api.Controllers
 
             var rowsAffected = await _repo.UpdateParcelStatusAsync(id, dto);
             if (rowsAffected == 0)
-            {
                 return NotFound(ApiResponse<string>.FailResponse("Parcel not found or no changes."));
-            }
 
             return Ok(ApiResponse<string>.SuccessResponse(null, "Parcel status updated successfully"));
         }
