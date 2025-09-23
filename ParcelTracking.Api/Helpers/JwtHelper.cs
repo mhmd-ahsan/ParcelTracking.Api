@@ -14,17 +14,20 @@ namespace ParcelTracking.Api.Helpers
             _configuration = configuration;
         }
 
-        public string GenerateToken(string userId, string role)
+        public string GenerateToken(string userId, string role, string? userName = null)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            if (!string.IsNullOrEmpty(userName))
+                claims.Add(new Claim(ClaimTypes.Name, userName));
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
@@ -32,7 +35,7 @@ namespace ParcelTracking.Api.Helpers
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: creds
-                );
+            );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

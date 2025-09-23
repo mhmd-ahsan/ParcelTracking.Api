@@ -17,7 +17,8 @@ namespace ParcelTracking.Api.Controllers
             _repo = repo;
         }
 
-        // ✅ Get all parcels
+        // ✅ Get all parcels (Admin only)
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllParcels()
         {
@@ -28,7 +29,8 @@ namespace ParcelTracking.Api.Controllers
             return Ok(ApiResponse<IEnumerable<ParcelResponseDto>>.SuccessResponse(parcels, "Parcels retrieved successfully"));
         }
 
-        // ✅ Get parcel by Id
+        // ✅ Get parcel by Id (Admin & Courier)
+        [Authorize(Roles = "Admin,Courier")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetParcelById(int id)
         {
@@ -39,7 +41,8 @@ namespace ParcelTracking.Api.Controllers
             return Ok(ApiResponse<ParcelResponseDto>.SuccessResponse(parcel, "Parcel found."));
         }
 
-        // ✅ Track by Tracking Number
+        // ✅ Track by Tracking Number (Customer & Admin)
+        [Authorize(Roles = "Customer,Admin")]
         [HttpGet("track/{trackingNo}")]
         public async Task<IActionResult> TrackParcel(string trackingNo)
         {
@@ -72,7 +75,7 @@ namespace ParcelTracking.Api.Controllers
             ));
         }
 
-        // ✅ Update parcel status (Admin, Courier)
+        // ✅ Update parcel status (Admin & Courier)
         [Authorize(Roles = "Admin,Courier")]
         [HttpPut("update-status/{id:int}")]
         public async Task<IActionResult> UpdateParcelStatus(int id, [FromBody] UpdateParcelStatusDto dto)
