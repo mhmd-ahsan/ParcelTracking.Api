@@ -54,5 +54,13 @@ namespace ParcelTracking.Api.Repositories.Implementations
             using var conn = _context.CreateConnection();
             return await conn.ExecuteAsync(query, new { Id = id });
         }
+
+        // ✅ Dashboard count
+        public async Task<int> GetCountAsync()
+        {
+            var sql = "SELECT COUNT(*) FROM Customers";
+            using var connection = _context.CreateConnection();
+            return await connection.ExecuteScalarAsync<int>(sql);
+        }
     }
 }

@@ -10,5 +10,8 @@ namespace ParcelTracking.Api.Repositories.Interfaces
         Task<int> UpdateParcelStatusAsync(int id, UpdateParcelStatusDto dto);
         Task<int> DeleteParcelAsync(int id);
         Task<ParcelResponseDto?> GetParcelByTrackingNoAsync(string trackingNo);
+
+        // ✅ Dashboard count
+        Task<int> GetCountAsync();
     }
 }

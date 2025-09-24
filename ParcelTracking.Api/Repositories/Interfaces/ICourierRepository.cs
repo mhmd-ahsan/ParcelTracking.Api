@@ -9,5 +9,8 @@ namespace ParcelTracking.Api.Repositories.Interfaces
         Task<int> CreateCourierAsync(CreateCourierDTO dto);
         Task<int> UpdateCourierAsync(int id, UpdateCourierDTO dto);
         Task<int> DeleteCourierAsync(int id);
+
+        // ✅ Dashboard count
+        Task<int> GetCountAsync();
     }
 }
